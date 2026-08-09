@@ -10,6 +10,8 @@ O backend do projeto utiliza as seguintes tecnologias e bibliotecas:
 - **Express** como framework web para rotas e requisições HTTP.
 - **Prisma ORM** para mapeamento objeto-relacional e integração moderna com o banco de dados.
 - **PostgreSQL (pg)** como banco de dados relacional e driver de conexão.
+- **JSON Web Token (JWT)** para geração de tokens de autenticação e proteção de rotas.
+- **bcryptjs** para criptografia segura de senhas.
 - **Zod** para validação de dados de entrada de forma declarativa e segura.
 - **tsx** para execução do servidor em modo de desenvolvimento com hot-reload rápido.
 - **dotenv** para gerenciamento de variáveis de ambiente.
@@ -45,10 +47,11 @@ backend/
 
 2. **Configurar Variáveis de Ambiente**:
    Crie um arquivo `.env` na raiz do diretório `backend` (ou copie e ajuste se houver um `.env.example`).
-   Adicione a porta e a URL de conexão do PostgreSQL:
+   Adicione a porta, a URL de conexão do PostgreSQL e a chave secreta do JWT:
    ```env
    PORT=3333
    DATABASE_URL="postgresql://usuario:senha@localhost:5432/nome_banco?schema=public"
+   JWT_SECRET="sua_chave_secreta_aqui"
    ```
 
 3. **Executar as Migrações do Banco de Dados**:
@@ -74,5 +77,10 @@ backend/
 ### Usuários
 
 * **`POST /users`**
-  - Criação de um novo usuário.
-  - **Validação com Zod**: Verifica se os dados enviados no corpo da requisição condizem com o esquema definido em `src/schemas/userSchema.ts`.
+  - Criação de um novo usuário (com senha criptografada via bcryptjs).
+  - **Validação com Zod**: Verifica se os dados enviados no corpo da requisição condizem com o esquema `createUserSchema` definido em `src/schemas/userSchema.ts`.
+
+* **`POST /session`**
+  - Autenticação/login do usuário.
+  - **Validação com Zod**: Verifica se os dados condizem com o esquema `authUserSchema` definido em `src/schemas/userSchema.ts`.
+  - **Retorno**: Retorna as informações do usuário logado e o token JWT para autorização nas requisições.
