@@ -3,6 +3,9 @@
 
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
+// Comando para criar migrate ---> npx prisma migrate dev
+// Gera a pasta generate      ---> npx prisma generate
+
 generator client {
   provider = "prisma-client"
   output   = "../src/generated/prisma"
@@ -10,7 +13,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
 }
 
 enum Role{
@@ -51,6 +53,8 @@ model Product{
   description String
   banner String
   disabled Boolean @default(false)
+
+  items Item[]
 
   category_id String
   category Category @relation(fields:[category_id], references:[id], onDelete: Cascade)

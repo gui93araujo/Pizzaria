@@ -20,11 +20,13 @@ O backend do projeto utiliza as seguintes tecnologias e bibliotecas:
 ```text
 backend/
 ├── prisma/
+│   ├── migrations/      # Histórico de migrações do banco de dados
 │   └── schema.prisma    # Esquema de banco de dados e modelos do Prisma
 ├── src/
 │   ├── config/          # Configurações gerais (banco de dados, etc.)
 │   ├── controllers/     # Controladores das rotas (lógica de requisição/resposta)
 │   ├── middlewares/     # Middlewares (validação, autenticação, etc.)
+│   ├── prisma/          # Instanciação do Prisma Client com adapter do PostgreSQL
 │   ├── schemas/         # Esquemas de validação de dados com Zod
 │   ├── services/        # Regras de negócio e serviços da aplicação
 │   ├── routes.ts        # Definição das rotas da API
