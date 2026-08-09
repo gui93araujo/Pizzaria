@@ -22,3 +22,12 @@ pnpm-debug.log*
 # System files
 .DS_Store
 Thumbs.db
+
+/src/generated/prisma
+
+# Editor and agent configurations
+.agents/
+.claude/
+.windsurf/
+skills-lock.json
+

@@ -8,6 +8,8 @@ O backend do projeto utiliza as seguintes tecnologias e bibliotecas:
 
 - **Node.js** com **TypeScript** para um ambiente robusto e tipagem estática.
 - **Express** como framework web para rotas e requisições HTTP.
+- **Prisma ORM** para mapeamento objeto-relacional e integração moderna com o banco de dados.
+- **PostgreSQL (pg)** como banco de dados relacional e driver de conexão.
 - **Zod** para validação de dados de entrada de forma declarativa e segura.
 - **tsx** para execução do servidor em modo de desenvolvimento com hot-reload rápido.
 - **dotenv** para gerenciamento de variáveis de ambiente.
@@ -17,6 +19,8 @@ O backend do projeto utiliza as seguintes tecnologias e bibliotecas:
 
 ```text
 backend/
+├── prisma/
+│   └── schema.prisma    # Esquema de banco de dados e modelos do Prisma
 ├── src/
 │   ├── config/          # Configurações gerais (banco de dados, etc.)
 │   ├── controllers/     # Controladores das rotas (lógica de requisição/resposta)
@@ -25,6 +29,7 @@ backend/
 │   ├── services/        # Regras de negócio e serviços da aplicação
 │   ├── routes.ts        # Definição das rotas da API
 │   └── server.ts        # Ponto de entrada (inicialização do Express)
+├── prisma.config.ts     # Arquivo de configuração do Prisma
 ├── tsconfig.json        # Configuração do TypeScript
 └── package.json         # Dependências e scripts do projeto
 ```
@@ -37,12 +42,26 @@ backend/
    ```
 
 2. **Configurar Variáveis de Ambiente**:
-   Crie um arquivo `.env` na raiz do diretório `backend` (utilize o `.env.example` se disponível ou defina a variável `PORT`). Exemplo:
+   Crie um arquivo `.env` na raiz do diretório `backend` (ou copie e ajuste se houver um `.env.example`).
+   Adicione a porta e a URL de conexão do PostgreSQL:
    ```env
    PORT=3333
+   DATABASE_URL="postgresql://usuario:senha@localhost:5432/nome_banco?schema=public"
    ```
 
-3. **Iniciar em modo de Desenvolvimento**:
+3. **Executar as Migrações do Banco de Dados**:
+   Crie as tabelas no banco de dados e aplique as migrações com:
+   ```bash
+   npx prisma migrate dev
+   ```
+
+4. **Gerar o Cliente do Prisma**:
+   Gere o client localmente (para a pasta configurada `src/generated/prisma`):
+   ```bash
+   npx prisma generate
+   ```
+
+5. **Iniciar em modo de Desenvolvimento**:
    ```bash
    npm run dev
    ```
