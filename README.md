@@ -84,3 +84,8 @@ backend/
   - Autenticação/login do usuário.
   - **Validação com Zod**: Verifica se os dados condizem com o esquema `authUserSchema` definido em `src/schemas/userSchema.ts`.
   - **Retorno**: Retorna as informações do usuário logado e o token JWT para autorização nas requisições.
+
+* **`GET /me`**
+  - Retorna os detalhes do usuário atualmente autenticado.
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Retorno**: Informações básicas do usuário logado (`id`, `name`, `email`, `role`, `createdAt`).

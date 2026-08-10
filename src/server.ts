@@ -8,12 +8,12 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-app.get("/", (req, res) => {
+app.get("/", (_req, res) => {
   res.send("API funcionando");
 });
 app.use(router);
 
-app.use((error: Error, req: Request, res: Response, next: NextFunction) => {
+app.use((error: Error, _req: Request, res: Response, _next: NextFunction) => {
   if (error instanceof Error) {
     return res.status(400).json({
       error: error.message,
