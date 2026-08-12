@@ -5,6 +5,7 @@ import { validateSchema } from "./middlewares/validateSchema";
 import { createUserSchema, authUserSchema } from "./schemas/userSchema";
 import { DetailUserController } from "./controllers/user/DetailUserController";
 import { isAuthenticated } from "./middlewares/isAuthenticated";
+import { CreateCategoryController } from "./controllers/category/CreateCategoryController";
 
 const router = Router();
 
@@ -22,5 +23,12 @@ router.post(
 );
 
 router.get("/me", isAuthenticated, new DetailUserController().handle);
+
+// ROTAS DE CATEGORIA
+router.post(
+  "/category",
+  isAuthenticated,
+  new CreateCategoryController().handle,
+);
 
 export { router };

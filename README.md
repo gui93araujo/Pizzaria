@@ -89,3 +89,11 @@ backend/
   - Retorna os detalhes do usuário atualmente autenticado.
   - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
   - **Retorno**: Informações básicas do usuário logado (`id`, `name`, `email`, `role`, `createdAt`).
+
+### Categorias
+
+* **`POST /category`**
+  - Criação de uma nova categoria de produto.
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Retorno**: Detalhes da categoria criada (`id`, `name`, `createdAt`).
+
