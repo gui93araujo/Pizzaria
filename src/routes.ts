@@ -6,6 +6,7 @@ import { createUserSchema, authUserSchema } from "./schemas/userSchema";
 import { DetailUserController } from "./controllers/user/DetailUserController";
 import { isAuthenticated } from "./middlewares/isAuthenticated";
 import { CreateCategoryController } from "./controllers/category/CreateCategoryController";
+import { ListCategoryController } from "./controllers/category/ListCategoryController";
 import { isAdmin } from "./middlewares/isAdmin";
 import { createCategorySchema } from "./schemas/categorySchema";
 
@@ -27,6 +28,12 @@ router.post(
 router.get("/me", isAuthenticated, new DetailUserController().handle);
 
 // ROTAS DE CATEGORIA
+router.get(
+  "/category",
+  isAuthenticated,
+  new ListCategoryController().handle,
+);
+
 router.post(
   "/category",
   isAuthenticated,
