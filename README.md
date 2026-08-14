@@ -92,10 +92,16 @@ backend/
 
 ### Categorias
 
+* **`GET /category`**
+  - Lista todas as categorias cadastradas, ordenadas por nome (Z-A).
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Retorno**: Um array com as categorias (`[{ id, name, createdAt }]`).
+
 * **`POST /category`**
   - Criação de uma nova categoria de produto.
   - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>` e que o usuário possua a role `ADMIN`.
   - **Validação com Zod**: Verifica se os dados enviados no corpo da requisição condizem com o esquema `createCategorySchema` em `src/schemas/categorySchema.ts`.
   - **Retorno**: Detalhes da categoria criada (`id`, `name`, `createdAt`).
+
 
 

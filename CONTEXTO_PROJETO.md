@@ -428,6 +428,19 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 
 ### Categorias
 
+#### `GET /category` — Listar categorias
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` |
+| **Body** | Nenhum |
+| **Service** | `ListCategoryService` — busca todas as categorias ordenadas por nome (Z-A) |
+| **Resposta 200** | `[{ id, name, createdAt }]` |
+| **Erros** | 401 — sem token; 400 — "Falha ao buscar categorias" |
+
+---
+
 #### `POST /category` — Criar categoria
 
 | Item | Detalhe |
@@ -438,6 +451,7 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 | **Service** | `CreateCategoryService` — persiste categoria no banco |
 | **Resposta 200** | `{ id, name, createdAt }` |
 | **Erros** | 401 — sem token ou sem permissão admin; 400 — "Erro ao criar categoria" |
+
 
 ---
 
@@ -475,7 +489,7 @@ declare namespace Express {
 | Entidade | Modelo Prisma | Rotas implementadas |
 |----------|---------------|---------------------|
 | User | Sim | POST `/users`, POST `/session`, GET `/me` |
-| Category | Sim | POST `/category` |
+| Category | Sim | POST `/category`, GET `/category` |
 | Product | Sim | Não |
 | Order | Sim | Não |
 | Item | Sim | Não |
