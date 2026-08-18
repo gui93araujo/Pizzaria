@@ -12,6 +12,8 @@ O backend do projeto utiliza as seguintes tecnologias e bibliotecas:
 - **PostgreSQL (pg)** como banco de dados relacional e driver de conexão.
 - **JSON Web Token (JWT)** para geração de tokens de autenticação e proteção de rotas.
 - **bcryptjs** para criptografia segura de senhas.
+- **Cloudinary** para upload e hospedagem de imagens na nuvem.
+- **Multer** para upload de arquivos via Multipart Form-Data (utilizando memoryStorage).
 - **Zod** para validação de dados de entrada de forma declarativa e segura.
 - **tsx** para execução do servidor em modo de desenvolvimento com hot-reload rápido.
 - **dotenv** para gerenciamento de variáveis de ambiente.
@@ -47,11 +49,14 @@ backend/
 
 2. **Configurar Variáveis de Ambiente**:
    Crie um arquivo `.env` na raiz do diretório `backend` (ou copie e ajuste se houver um `.env.example`).
-   Adicione a porta, a URL de conexão do PostgreSQL e a chave secreta do JWT:
+   Adicione a porta, a URL de conexão do PostgreSQL, a chave secreta do JWT e as chaves do Cloudinary:
    ```env
    PORT=3333
    DATABASE_URL="postgresql://usuario:senha@localhost:5432/nome_banco?schema=public"
    JWT_SECRET="sua_chave_secreta_aqui"
+   CLOUDINARY_CLOUD_NAME="seu_cloud_name"
+   CLOUDINARY_API_KEY="sua_api_key"
+   CLOUDINARY_API_SECRET="seu_api_secret"
    ```
 
 3. **Executar as Migrações do Banco de Dados**:
@@ -102,6 +107,15 @@ backend/
   - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>` e que o usuário possua a role `ADMIN`.
   - **Validação com Zod**: Verifica se os dados enviados no corpo da requisição condizem com o esquema `createCategorySchema` em `src/schemas/categorySchema.ts`.
   - **Retorno**: Detalhes da categoria criada (`id`, `name`, `createdAt`).
+
+### Produtos
+
+* **`POST /product`**
+  - Cadastro de um novo produto (incluindo upload da imagem do banner).
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>` e que o usuário possua a role `ADMIN`.
+  - **Tipo de Requisição**: `Multipart Form-Data` contendo os campos: `name`, `price`, `description`, `category_id` e o arquivo de imagem no campo `file`.
+  - **Retorno**: Detalhes do produto criado (`id`, `name`, `price`, `description`, `banner`, `category_id`, `createdAt`).
+
 
 
 

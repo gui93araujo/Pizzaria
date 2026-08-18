@@ -63,9 +63,15 @@ backend/
 │   ├── @types/
 │   │   └── express/
 │   │       └── index.d.ts       # Extensão do Request do Express (req.id)
+│   ├── config/
+│   │   ├── cloudinary.ts        # Configuração do serviço de imagem Cloudinary
+│   │   └── multer.ts            # Configuração do Multer (upload em memória)
 │   ├── controllers/
 │   │   ├── category/
-│   │   │   └── CreateCategoryController.ts
+│   │   │   ├── CreateCategoryController.ts
+│   │   │   └── ListCategoryController.ts
+│   │   ├── product/
+│   │   │   └── CreateProductController.ts
 │   │   └── user/
 │   │       ├── AuthUserController.ts
 │   │       ├── createUserController.ts
@@ -83,7 +89,10 @@ backend/
 │   │   └── userSchema.ts        # Schemas Zod de usuário
 │   ├── services/
 │   │   ├── category/
-│   │   │   └── CreateCategoryService.ts
+│   │   │   ├── CreateCategoryService.ts
+│   │   │   └── ListCategoryService.ts
+│   │   ├── product/
+│   │   │   └── CreateProductService.ts
 │   │   └── user/
 │   │       ├── AuthUserService.ts
 │   │       ├── createUserService.ts
@@ -117,6 +126,8 @@ backend/
 | `zod` | ^4.4.3 | Validação de schemas |
 | `jsonwebtoken` | ^9.0.3 | Autenticação JWT |
 | `bcryptjs` | ^3.0.3 | Hash de senhas (salt rounds: 8) |
+| `cloudinary` | ^2.10.0 | Upload e hospedagem de imagens na nuvem |
+| `multer` | ^2.2.0 | Middleware de upload multipart/form-data |
 | `cors` | ^2.8.6 | Cross-Origin Resource Sharing |
 | `dotenv` | ^17.4.2 | Variáveis de ambiente |
 | `tsx` | ^4.23.8 | Execução TypeScript em dev (watch) |
@@ -132,6 +143,8 @@ backend/
 | `@types/cors` | ^2.8.19 | Tipos CORS |
 | `@types/jsonwebtoken` | ^9.0.10 | Tipos JWT |
 | `@types/pg` | ^8.21.0 | Tipos pg |
+| `@types/multer` | ^2.2.0 | Tipos do Multer |
+
 
 ### Runtime e configuração
 
@@ -153,6 +166,9 @@ backend/
 | `PORT` | Não | Porta do servidor (padrão: 3333) |
 | `DATABASE_URL` | Sim | Connection string PostgreSQL |
 | `JWT_SECRET` | Sim | Chave secreta para assinatura/verificação de tokens |
+| `CLOUDINARY_CLOUD_NAME` | Sim | Nome da conta (Cloud Name) no Cloudinary |
+| `CLOUDINARY_API_KEY` | Sim | API Key pública do Cloudinary |
+| `CLOUDINARY_API_SECRET` | Sim | API Secret secreta do Cloudinary |
 
 Exemplo `.env`:
 
@@ -160,6 +176,9 @@ Exemplo `.env`:
 PORT=3333
 DATABASE_URL="postgresql://usuario:senha@localhost:5432/nome_banco?schema=public"
 JWT_SECRET="sua_chave_secreta_aqui"
+CLOUDINARY_CLOUD_NAME="seu_cloud_name"
+CLOUDINARY_API_KEY="sua_api_key"
+CLOUDINARY_API_SECRET="seu_api_secret"
 ```
 
 ---
@@ -452,6 +471,20 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 | **Resposta 200** | `{ id, name, createdAt }` |
 | **Erros** | 401 — sem token ou sem permissão admin; 400 — "Erro ao criar categoria" |
 
+---
+
+### Produtos
+
+#### `POST /product` — Criar produto
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token + role ADMIN |
+| **Middlewares** | `isAuthenticated` → `isAdmin` → `upload.single("file")` |
+| **Body (Multipart)** | `{ name, price, description, category_id, file }` |
+| **Service** | `CreateProductService` — valida categoria, faz upload do banner para o Cloudinary e persiste o produto no banco |
+| **Resposta 200** | `{ id, name, price, description, banner, category_id, createdAt }` |
+| **Erros** | 401 — sem token ou sem permissão admin; 400 — "Categoria não encontrada!" ou "Erro ao fazer o upload da imagem!" |
 
 ---
 
@@ -490,7 +523,7 @@ declare namespace Express {
 |----------|---------------|---------------------|
 | User | Sim | POST `/users`, POST `/session`, GET `/me` |
 | Category | Sim | POST `/category`, GET `/category` |
-| Product | Sim | Não |
+| Product | Sim | POST `/product` |
 | Order | Sim | Não |
 | Item | Sim | Não |
 
