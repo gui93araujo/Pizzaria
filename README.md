@@ -110,11 +110,18 @@ backend/
 
 ### Produtos
 
+* **`GET /products`**
+  - Lista todos os produtos cadastrados, ordenados de forma decrescente por nome (Z-A).
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Validação com Zod**: Aceita opcionalmente na query param o campo `disabled` (como string `"true"` ou `"false"`) para filtrar os produtos.
+  - **Retorno**: Um array com os produtos e seus respectivos detalhes, incluindo as informações da categoria associada (`[{ id, name, price, description, banner, disabled, category_id, createdAt, category: { id, name } }]`).
+
 * **`POST /product`**
   - Cadastro de um novo produto (incluindo upload da imagem do banner).
   - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>` e que o usuário possua a role `ADMIN`.
   - **Tipo de Requisição**: `Multipart Form-Data` contendo os campos: `name`, `price`, `description`, `category_id` e o arquivo de imagem no campo `file`.
   - **Retorno**: Detalhes do produto criado (`id`, `name`, `price`, `description`, `banner`, `category_id`, `createdAt`).
+
 
 
 

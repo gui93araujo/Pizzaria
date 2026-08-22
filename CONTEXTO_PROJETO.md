@@ -71,7 +71,8 @@ backend/
 │   │   │   ├── CreateCategoryController.ts
 │   │   │   └── ListCategoryController.ts
 │   │   ├── product/
-│   │   │   └── CreateProductController.ts
+│   │   │   ├── CreateProductController.ts
+│   │   │   └── ListProductsController.ts
 │   │   └── user/
 │   │       ├── AuthUserController.ts
 │   │       ├── createUserController.ts
@@ -92,7 +93,8 @@ backend/
 │   │   │   ├── CreateCategoryService.ts
 │   │   │   └── ListCategoryService.ts
 │   │   ├── product/
-│   │   │   └── CreateProductService.ts
+│   │   │   ├── CreateProductService.ts
+│   │   │   └── ListProductsService.ts
 │   │   └── user/
 │   │       ├── AuthUserService.ts
 │   │       ├── createUserService.ts
@@ -369,6 +371,12 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | `body.description` | string, mínimo 1 caractere |
 | `body.category_id` | string (UUID da categoria) |
 
+#### `listProductsSchema` — GET `/products`
+
+| Campo | Regras |
+|-------|--------|
+| `query.disabled` | string ("true" ou "false"), opcional |
+
 ---
 
 ## Middlewares
@@ -379,7 +387,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |------|---------|
 | **Arquivo** | `src/middlewares/validateSchema.ts` |
 | **Função** | Valida entrada da requisição com Zod antes de chegar ao controller |
-| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product` |
+| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products` |
 
 ### `isAuthenticated`
 
@@ -388,7 +396,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Arquivo** | `src/middlewares/isAuthenticated.ts` |
 | **Função** | Lê header `Authorization: Bearer <token>`, valida JWT com `JWT_SECRET`, extrai `sub` (user id) e define `req.id` |
 | **Erros** | 401 — "Token não informado" ou "Token inválido" |
-| **Usado em** | GET `/me`, POST `/category`, POST `/product` |
+| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products` |
 
 ### `isAdmin`
 
@@ -486,12 +494,25 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 
 ### Produtos
 
+#### `GET /products` — Listar produtos
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` → `validateSchema(listProductsSchema)` |
+| **Query Params** | `disabled` (opcional, filtra por status ativo/desativo) |
+| **Service** | `ListProductsService` — busca os produtos cadastrados com informações de categoria associada |
+| **Resposta 200** | `[{ id, name, price, description, banner, disabled, category_id, createdAt, category: { id, name } }]` |
+| **Erros** | 401 — sem token; 400 — "Falha ao buscar produtos" |
+
+---
+
 #### `POST /product` — Criar produto
 
 | Item | Detalhe |
 |------|---------|
 | **Auth** | Sim — Bearer token + role ADMIN |
-| **Middlewares** | `isAuthenticated` → `isAdmin` → `upload.single("file")` |
+| **Middlewares** | `isAuthenticated` → `isAdmin` → `upload.single("file")` → `validateSchema(createProductsSchema)` |
 | **Body (Multipart)** | `{ name, price, description, category_id, file }` |
 | **Service** | `CreateProductService` — valida categoria, faz upload do banner para o Cloudinary e persiste o produto no banco |
 | **Resposta 200** | `{ id, name, price, description, banner, category_id, createdAt }` |
@@ -534,7 +555,7 @@ declare namespace Express {
 |----------|---------------|---------------------|
 | User | Sim | POST `/users`, POST `/session`, GET `/me` |
 | Category | Sim | POST `/category`, GET `/category` |
-| Product | Sim | POST `/product` |
+| Product | Sim | POST `/product`, GET `/products` |
 | Order | Sim | Não |
 | Item | Sim | Não |
 

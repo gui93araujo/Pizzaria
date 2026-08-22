@@ -12,7 +12,8 @@ import { ListCategoryController } from "./controllers/category/ListCategoryContr
 import { isAdmin } from "./middlewares/isAdmin";
 import { createCategorySchema } from "./schemas/categorySchema";
 import { CreateProductController } from "./controllers/product/CreateProductController";
-import { createProductsSchema } from "./schemas/productSchema";
+import { ListProductsController } from "./controllers/product/ListProductsController";
+import { createProductsSchema, listProductsSchema } from "./schemas/productSchema";
 
 const router = Router();
 const upload = multer(uploadConfig);
@@ -44,6 +45,13 @@ router.post(
 );
 
 // ROTAS DE PRODUTO
+router.get(
+  "/products",
+  isAuthenticated,
+  validateSchema(listProductsSchema),
+  new ListProductsController().handle,
+);
+
 router.post(
   "/product",
   isAuthenticated,
