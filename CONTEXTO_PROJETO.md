@@ -358,6 +358,17 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |-------|--------|
 | `body.name` | string, mínimo 2 caracteres |
 
+### Schemas de produto (`src/schemas/productSchema.ts`)
+
+#### `createProductsSchema` — POST `/product`
+
+| Campo | Regras |
+|-------|--------|
+| `body.name` | string, mínimo 1 caractere |
+| `body.price` | string numérica (apenas dígitos), mínimo 1 caractere |
+| `body.description` | string, mínimo 1 caractere |
+| `body.category_id` | string (UUID da categoria) |
+
 ---
 
 ## Middlewares
@@ -368,7 +379,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |------|---------|
 | **Arquivo** | `src/middlewares/validateSchema.ts` |
 | **Função** | Valida entrada da requisição com Zod antes de chegar ao controller |
-| **Usado em** | POST `/users`, POST `/session`, POST `/category` |
+| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product` |
 
 ### `isAuthenticated`
 
@@ -377,7 +388,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Arquivo** | `src/middlewares/isAuthenticated.ts` |
 | **Função** | Lê header `Authorization: Bearer <token>`, valida JWT com `JWT_SECRET`, extrai `sub` (user id) e define `req.id` |
 | **Erros** | 401 — "Token não informado" ou "Token inválido" |
-| **Usado em** | GET `/me`, POST `/category` |
+| **Usado em** | GET `/me`, POST `/category`, POST `/product` |
 
 ### `isAdmin`
 
@@ -387,7 +398,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Função** | Busca usuário por `req.id` no banco e verifica se `role === "ADMIN"` |
 | **Pré-requisito** | Deve rodar após `isAuthenticated` |
 | **Erros** | 401 — "Usuário sem permissão" |
-| **Usado em** | POST `/category` |
+| **Usado em** | POST `/category`, POST `/product` |
 
 ### Middleware global de erro (`server.ts`)
 

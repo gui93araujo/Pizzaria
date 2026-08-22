@@ -12,6 +12,7 @@ import { ListCategoryController } from "./controllers/category/ListCategoryContr
 import { isAdmin } from "./middlewares/isAdmin";
 import { createCategorySchema } from "./schemas/categorySchema";
 import { CreateProductController } from "./controllers/product/CreateProductController";
+import { createProductsSchema } from "./schemas/productSchema";
 
 const router = Router();
 const upload = multer(uploadConfig);
@@ -48,6 +49,7 @@ router.post(
   isAuthenticated,
   isAdmin,
   upload.single("file"),
+  validateSchema(createProductsSchema),
   new CreateProductController().handle,
 );
 
