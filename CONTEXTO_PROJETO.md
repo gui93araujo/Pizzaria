@@ -72,6 +72,7 @@ backend/
 │   │   │   └── ListCategoryController.ts
 │   │   ├── product/
 │   │   │   ├── CreateProductController.ts
+│   │   │   ├── DeleteProductController.ts
 │   │   │   └── ListProductsController.ts
 │   │   └── user/
 │   │       ├── AuthUserController.ts
@@ -94,6 +95,7 @@ backend/
 │   │   │   └── ListCategoryService.ts
 │   │   ├── product/
 │   │   │   ├── CreateProductService.ts
+│   │   │   ├── DeleteProductService.ts
 │   │   │   └── ListProductsService.ts
 │   │   └── user/
 │   │       ├── AuthUserService.ts
@@ -396,7 +398,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Arquivo** | `src/middlewares/isAuthenticated.ts` |
 | **Função** | Lê header `Authorization: Bearer <token>`, valida JWT com `JWT_SECRET`, extrai `sub` (user id) e define `req.id` |
 | **Erros** | 401 — "Token não informado" ou "Token inválido" |
-| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products` |
+| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product` |
 
 ### `isAdmin`
 
@@ -406,7 +408,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Função** | Busca usuário por `req.id` no banco e verifica se `role === "ADMIN"` |
 | **Pré-requisito** | Deve rodar após `isAuthenticated` |
 | **Erros** | 401 — "Usuário sem permissão" |
-| **Usado em** | POST `/category`, POST `/product` |
+| **Usado em** | POST `/category`, POST `/product`, DELETE `/product` |
 
 ### Middleware global de erro (`server.ts`)
 
@@ -520,6 +522,19 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 
 ---
 
+#### `DELETE /product` — Deletar/arquivar produto
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token + role ADMIN |
+| **Middlewares** | `isAuthenticated` → `isAdmin` |
+| **Query Params** | `product_id` (ID do produto a ser desativado) |
+| **Service** | `DeleteProductService` — atualiza o status `disabled` do produto para `true` (soft delete) |
+| **Resposta 200** | `{ message: "Produto deletado/arquivado com sucesso!" }` |
+| **Erros** | 401 — sem token ou sem permissão admin; 400 — "Falha ao deletar produto" |
+
+---
+
 ## Autenticação e Autorização
 
 ### Fluxo de login
@@ -555,7 +570,7 @@ declare namespace Express {
 |----------|---------------|---------------------|
 | User | Sim | POST `/users`, POST `/session`, GET `/me` |
 | Category | Sim | POST `/category`, GET `/category` |
-| Product | Sim | POST `/product`, GET `/products` |
+| Product | Sim | POST `/product`, GET `/products`, DELETE `/product` |
 | Order | Sim | Não |
 | Item | Sim | Não |
 

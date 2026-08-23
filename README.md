@@ -122,6 +122,13 @@ backend/
   - **Tipo de Requisição**: `Multipart Form-Data` contendo os campos: `name`, `price`, `description`, `category_id` e o arquivo de imagem no campo `file`.
   - **Retorno**: Detalhes do produto criado (`id`, `name`, `price`, `description`, `banner`, `category_id`, `createdAt`).
 
+* **`DELETE /product`**
+  - Desativa/desabilita um produto (soft delete).
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>` e que o usuário possua a role `ADMIN`.
+  - **Query Params**: `product_id` contendo o ID do produto a ser desativado.
+  - **Retorno**: Mensagem de sucesso (`{ message: "Produto deletado/arquivado com sucesso!" }`).
+
+
 
 
 
