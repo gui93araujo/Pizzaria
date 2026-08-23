@@ -108,6 +108,13 @@ backend/
   - **Validação com Zod**: Verifica se os dados enviados no corpo da requisição condizem com o esquema `createCategorySchema` em `src/schemas/categorySchema.ts`.
   - **Retorno**: Detalhes da categoria criada (`id`, `name`, `createdAt`).
 
+* **`GET /category/product`**
+  - Lista todos os produtos pertencentes a uma categoria específica.
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Validação com Zod**: Requer na query param o ID da categoria (`category_id`) a ser consultada (mínimo 1 caractere).
+  - **Retorno**: Um array com os produtos associados (`[{ id, name, price, description, banner, disabled, category_id, createdAt, category: { id, name } }]`).
+
+
 ### Produtos
 
 * **`GET /products`**
@@ -127,6 +134,21 @@ backend/
   - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>` e que o usuário possua a role `ADMIN`.
   - **Query Params**: `product_id` contendo o ID do produto a ser desativado.
   - **Retorno**: Mensagem de sucesso (`{ message: "Produto deletado/arquivado com sucesso!" }`).
+
+### Pedidos
+
+* **`POST /order`**
+  - Criação de um novo pedido (inicialmente como rascunho).
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Validação com Zod**: Verifica se os dados enviados condizem com `createOrderSchema` em `src/schemas/orderSchema.ts` (exige `table` como número inteiro positivo e aceita `name` opcionalmente).
+  - **Retorno**: Detalhes do pedido criado (`id`, `table`, `name`, `status`, `draft`, `createdAt`).
+
+* **`GET /orders`**
+  - Lista os pedidos cadastrados, permitindo filtrar por rascunhos.
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Query Params**: `draft` (opcional, `"true"` ou `"false"`).
+  - **Retorno**: Array com os pedidos, incluindo os itens e dados básicos dos produtos associados.
+
 
 
 

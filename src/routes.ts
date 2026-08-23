@@ -16,8 +16,13 @@ import { ListProductsController } from "./controllers/product/ListProductsContro
 import {
   createProductsSchema,
   listProductsSchema,
+  listProductsByCategorySchema,
 } from "./schemas/productSchema";
 import { DeleteProductController } from "./controllers/product/DeleteProductController";
+import { ListProductsByCategoryController } from "./controllers/product/ListProductsByCategoryController";
+import { CreateOrderController } from "./controllers/order/CreateOrderController";
+import { createOrderSchema } from "./schemas/orderSchema";
+import { ListOrderController } from "./controllers/order/ListOrderController";
 
 const router = Router();
 const upload = multer(uploadConfig);
@@ -48,6 +53,13 @@ router.post(
   new CreateCategoryController().handle,
 );
 
+router.get(
+  "/category/product",
+  isAuthenticated,
+  validateSchema(listProductsByCategorySchema),
+  new ListProductsByCategoryController().handle,
+);
+
 // ROTAS DE PRODUTO
 router.get(
   "/products",
@@ -71,5 +83,15 @@ router.delete(
   isAdmin,
   new DeleteProductController().handle,
 );
+
+// ROTAS DE PEDIDO
+router.post(
+  "/order",
+  isAuthenticated,
+  validateSchema(createOrderSchema),
+  new CreateOrderController().handle,
+);
+
+router.get("/orders", isAuthenticated, new ListOrderController().handle);
 
 export { router };

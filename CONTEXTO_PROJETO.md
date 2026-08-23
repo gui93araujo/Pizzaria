@@ -70,9 +70,13 @@ backend/
 │   │   ├── category/
 │   │   │   ├── CreateCategoryController.ts
 │   │   │   └── ListCategoryController.ts
+│   │   ├── order/
+│   │   │   ├── CreateOrderController.ts
+│   │   │   └── ListOrderController.ts
 │   │   ├── product/
 │   │   │   ├── CreateProductController.ts
 │   │   │   ├── DeleteProductController.ts
+│   │   │   ├── ListProductsByCategoryController.ts
 │   │   │   └── ListProductsController.ts
 │   │   └── user/
 │   │       ├── AuthUserController.ts
@@ -88,14 +92,20 @@ backend/
 │   │   └── index.ts             # Instância singleton do PrismaClient
 │   ├── schemas/
 │   │   ├── categorySchema.ts    # Schemas Zod de categoria
+│   │   ├── orderSchema.ts       # Schemas Zod de pedido
+│   │   ├── productSchema.ts     # Schemas Zod de produto
 │   │   └── userSchema.ts        # Schemas Zod de usuário
 │   ├── services/
 │   │   ├── category/
 │   │   │   ├── CreateCategoryService.ts
 │   │   │   └── ListCategoryService.ts
+│   │   ├── order/
+│   │   │   ├── CreateOrderService.ts
+│   │   │   └── ListOrderService.ts
 │   │   ├── product/
 │   │   │   ├── CreateProductService.ts
 │   │   │   ├── DeleteProductService.ts
+│   │   │   ├── ListProductsByCategoryService.ts
 │   │   │   └── ListProductsService.ts
 │   │   └── user/
 │   │       ├── AuthUserService.ts
@@ -379,6 +389,21 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |-------|--------|
 | `query.disabled` | string ("true" ou "false"), opcional |
 
+#### `listProductsByCategorySchema` — GET `/category/product`
+
+| Campo | Regras |
+|-------|--------|
+| `query.category_id` | string, mínimo 1 caractere |
+
+### Schemas de pedido (`src/schemas/orderSchema.ts`)
+
+#### `createOrderSchema` — POST `/order`
+
+| Campo | Regras |
+|-------|--------|
+| `body.table` | número inteiro positivo |
+| `body.name` | string, opcional |
+
 ---
 
 ## Middlewares
@@ -389,7 +414,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |------|---------|
 | **Arquivo** | `src/middlewares/validateSchema.ts` |
 | **Função** | Valida entrada da requisição com Zod antes de chegar ao controller |
-| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products` |
+| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products`, GET `/category/product`, POST `/order` |
 
 ### `isAuthenticated`
 
@@ -398,7 +423,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Arquivo** | `src/middlewares/isAuthenticated.ts` |
 | **Função** | Lê header `Authorization: Bearer <token>`, valida JWT com `JWT_SECRET`, extrai `sub` (user id) e define `req.id` |
 | **Erros** | 401 — "Token não informado" ou "Token inválido" |
-| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product` |
+| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product`, POST `/order`, GET `/orders` |
 
 ### `isAdmin`
 
@@ -494,6 +519,19 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 
 ---
 
+#### `GET /category/product` — Listar produtos por categoria
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` → `validateSchema(listProductsByCategorySchema)` |
+| **Query Params** | `category_id` (ID da categoria obrigatória) |
+| **Service** | `ListProductsByCategoryService` — busca os produtos ativos (`disabled: false`) de uma categoria específica |
+| **Resposta 200** | `[{ id, name, price, description, banner, disabled, category_id, createdAt, category: { id, name } }]` |
+| **Erros** | 401 — sem token; 400 — "Categoria não encontrada!" ou "Falha ao buscar produtos" |
+
+---
+
 ### Produtos
 
 #### `GET /products` — Listar produtos
@@ -535,6 +573,34 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 
 ---
 
+### Pedidos
+
+#### `POST /order` — Criar pedido
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` → `validateSchema(createOrderSchema)` |
+| **Body** | `{ table, name }` |
+| **Service** | `CreateOrderService` — insere o novo pedido no banco como rascunho (`draft: true`) |
+| **Resposta 200** | `{ id, table, name, status, draft, createdAt }` |
+| **Erros** | 401 — sem token; 400 — "Erro ao criar pedido" |
+
+---
+
+#### `GET /orders` — Listar pedidos
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` |
+| **Query Params** | `draft` (opcional, filtra por status de rascunho) |
+| **Service** | `ListOrderService` — busca os pedidos no banco com seus respectivos itens e produtos vinculados |
+| **Resposta 200** | `[{ id, table, name, status, draft, createdAt, items: [{ id, amount, product: { id, name, price, banner } }] }]` |
+| **Erros** | 401 — sem token |
+
+---
+
 ## Autenticação e Autorização
 
 ### Fluxo de login
@@ -570,8 +636,8 @@ declare namespace Express {
 |----------|---------------|---------------------|
 | User | Sim | POST `/users`, POST `/session`, GET `/me` |
 | Category | Sim | POST `/category`, GET `/category` |
-| Product | Sim | POST `/product`, GET `/products`, DELETE `/product` |
-| Order | Sim | Não |
+| Product | Sim | POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product` |
+| Order | Sim | POST `/order`, GET `/orders` |
 | Item | Sim | Não |
 
 ---
