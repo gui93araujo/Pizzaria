@@ -161,6 +161,13 @@ backend/
   - **Validação com Zod**: Verifica se os dados enviados na query params condizem com `removeItemSchema` em `src/schemas/orderSchema.ts` (exige `item_id` como string).
   - **Retorno**: Mensagem de confirmação da remoção (`{ message: "Item removido com sucesso!" }`).
 
+* **`GET /order/detail`**
+  - Busca todos os detalhes de um pedido específico (itens, dados da order e dados do produto).
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Validação com Zod**: Verifica se os dados enviados na query params condizem com `detailOrderSchema` em `src/schemas/orderSchema.ts` (exige `order_id` como string).
+  - **Retorno**: Detalhes do pedido contendo a lista de itens inclusos e dados do produto (`{ id, table, name, draft, status, createdAt, updatedAt, items: [{ id, amount, createdAt, product: { id, name, price, description, banner } }] }`).
+
+
 
 
 

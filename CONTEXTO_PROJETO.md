@@ -73,6 +73,7 @@ backend/
 │   │   ├── order/
 │   │   │   ├── AddItemController.ts
 │   │   │   ├── CreateOrderController.ts
+│   │   │   ├── DetailOrderController.ts
 │   │   │   ├── ListOrderController.ts
 │   │   │   └── RemoveItemController.ts
 │   │   ├── product/
@@ -104,6 +105,7 @@ backend/
 │   │   ├── order/
 │   │   │   ├── AddItemOrderService.ts
 │   │   │   ├── CreateOrderService.ts
+│   │   │   ├── DetailOrderService.ts
 │   │   │   ├── ListOrderService.ts
 │   │   │   └── RemoveItemOrderService.ts
 │   │   ├── product/
@@ -422,6 +424,12 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |-------|--------|
 | `query.item_id` | string, mínimo 1 caractere |
 
+#### `detailOrderSchema` — GET `/order/detail`
+
+| Campo | Regras |
+|-------|--------|
+| `query.order_id` | string, mínimo 1 caractere |
+
 ---
 
 ## Middlewares
@@ -432,7 +440,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |------|---------|
 | **Arquivo** | `src/middlewares/validateSchema.ts` |
 | **Função** | Valida entrada da requisição com Zod antes de chegar ao controller |
-| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products`, GET `/category/product`, POST `/order`, POST `/order/add`, DELETE `/order/remove` |
+| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products`, GET `/category/product`, POST `/order`, POST `/order/add`, DELETE `/order/remove`, GET `/order/detail` |
 
 ### `isAuthenticated`
 
@@ -441,7 +449,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Arquivo** | `src/middlewares/isAuthenticated.ts` |
 | **Função** | Lê header `Authorization: Bearer <token>`, valida JWT com `JWT_SECRET`, extrai `sub` (user id) e define `req.id` |
 | **Erros** | 401 — "Token não informado" ou "Token inválido" |
-| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product`, POST `/order`, GET `/orders`, POST `/order/add`, DELETE `/order/remove` |
+| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product`, POST `/order`, GET `/orders`, POST `/order/add`, DELETE `/order/remove`, GET `/order/detail` |
 
 ### `isAdmin`
 
@@ -645,6 +653,19 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 
 ---
 
+#### `GET /order/detail` — Detalhes do pedido
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` → `validateSchema(detailOrderSchema)` |
+| **Query Params** | `order_id` (ID do pedido) |
+| **Service** | `DetailOrderService` — verifica se o pedido existe, e retorna os detalhes do pedido incluindo itens e dados de produto associado |
+| **Resposta 200** | `{ id, table, name, draft, status, createdAt, updatedAt, items: [{ id, amount, createdAt, product: { id, name, price, description, banner } }] }` |
+| **Erros** | 401 — sem token; 400 — "Pedido não encontrado" ou "Falha ao buscar detalhes do pedido." |
+
+---
+
 ## Autenticação e Autorização
 
 ### Fluxo de login
@@ -681,7 +702,7 @@ declare namespace Express {
 | User | Sim | POST `/users`, POST `/session`, GET `/me` |
 | Category | Sim | POST `/category`, GET `/category` |
 | Product | Sim | POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product` |
-| Order | Sim | POST `/order`, GET `/orders` |
+| Order | Sim | POST `/order`, GET `/orders`, GET `/order/detail` |
 | Item | Sim | POST `/order/add`, DELETE `/order/remove` |
 
 ---
