@@ -149,6 +149,13 @@ backend/
   - **Query Params**: `draft` (opcional, `"true"` ou `"false"`).
   - **Retorno**: Array com os pedidos, incluindo os itens e dados básicos dos produtos associados.
 
+* **`POST /order/add`**
+  - Adiciona um produto com uma quantidade a um pedido.
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Validação com Zod**: Verifica se os dados do corpo condizem com `addItemSchema` em `src/schemas/orderSchema.ts` (exige `order_id` como string, `product_id` como string, e `amount` como número inteiro positivo).
+  - **Retorno**: Detalhes do item criado e o produto associado (`{ id, amount, order_id, product_id, createdAt, product: { id, name, price, description, banner } }`).
+
+
 
 
 

@@ -71,6 +71,7 @@ backend/
 │   │   │   ├── CreateCategoryController.ts
 │   │   │   └── ListCategoryController.ts
 │   │   ├── order/
+│   │   │   ├── AddItemController.ts
 │   │   │   ├── CreateOrderController.ts
 │   │   │   └── ListOrderController.ts
 │   │   ├── product/
@@ -100,6 +101,7 @@ backend/
 │   │   │   ├── CreateCategoryService.ts
 │   │   │   └── ListCategoryService.ts
 │   │   ├── order/
+│   │   │   ├── AddItemOrderService.ts
 │   │   │   ├── CreateOrderService.ts
 │   │   │   └── ListOrderService.ts
 │   │   ├── product/
@@ -404,6 +406,14 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | `body.table` | número inteiro positivo |
 | `body.name` | string, opcional |
 
+#### `addItemSchema` — POST `/order/add`
+
+| Campo | Regras |
+|-------|--------|
+| `body.order_id` | string, mínimo 1 caractere |
+| `body.product_id` | string, mínimo 1 caractere |
+| `body.amount` | número inteiro positivo |
+
 ---
 
 ## Middlewares
@@ -414,7 +424,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |------|---------|
 | **Arquivo** | `src/middlewares/validateSchema.ts` |
 | **Função** | Valida entrada da requisição com Zod antes de chegar ao controller |
-| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products`, GET `/category/product`, POST `/order` |
+| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products`, GET `/category/product`, POST `/order`, POST `/order/add` |
 
 ### `isAuthenticated`
 
@@ -423,7 +433,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Arquivo** | `src/middlewares/isAuthenticated.ts` |
 | **Função** | Lê header `Authorization: Bearer <token>`, valida JWT com `JWT_SECRET`, extrai `sub` (user id) e define `req.id` |
 | **Erros** | 401 — "Token não informado" ou "Token inválido" |
-| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product`, POST `/order`, GET `/orders` |
+| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product`, POST `/order`, GET `/orders`, POST `/order/add` |
 
 ### `isAdmin`
 
@@ -601,6 +611,19 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 
 ---
 
+#### `POST /order/add` — Adicionar item ao pedido
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` → `validateSchema(addItemSchema)` |
+| **Body** | `{ order_id, product_id, amount }` |
+| **Service** | `AddItemOrderService` — verifica se a order e o produto existem (e se o produto não está disabled), e cria o item vinculado |
+| **Resposta 201** | `{ id, amount, order_id, product_id, createdAt, product: { id, name, price, description, banner } }` |
+| **Erros** | 401 — sem token; 400 — "Order não encontrada", "Produto não encontrado." ou "Falha ao adicionar item no pedido." |
+
+---
+
 ## Autenticação e Autorização
 
 ### Fluxo de login
@@ -638,7 +661,7 @@ declare namespace Express {
 | Category | Sim | POST `/category`, GET `/category` |
 | Product | Sim | POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product` |
 | Order | Sim | POST `/order`, GET `/orders` |
-| Item | Sim | Não |
+| Item | Sim | POST `/order/add` |
 
 ---
 
