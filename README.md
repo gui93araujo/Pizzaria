@@ -155,6 +155,13 @@ backend/
   - **Validação com Zod**: Verifica se os dados do corpo condizem com `addItemSchema` em `src/schemas/orderSchema.ts` (exige `order_id` como string, `product_id` como string, e `amount` como número inteiro positivo).
   - **Retorno**: Detalhes do item criado e o produto associado (`{ id, amount, order_id, product_id, createdAt, product: { id, name, price, description, banner } }`).
 
+* **`DELETE /order/remove`**
+  - Deleta um item específico de um pedido.
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Validação com Zod**: Verifica se os dados enviados na query params condizem com `removeItemSchema` em `src/schemas/orderSchema.ts` (exige `item_id` como string).
+  - **Retorno**: Mensagem de confirmação da remoção (`{ message: "Item removido com sucesso!" }`).
+
+
 
 
 

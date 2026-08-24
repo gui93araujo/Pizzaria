@@ -73,7 +73,8 @@ backend/
 │   │   ├── order/
 │   │   │   ├── AddItemController.ts
 │   │   │   ├── CreateOrderController.ts
-│   │   │   └── ListOrderController.ts
+│   │   │   ├── ListOrderController.ts
+│   │   │   └── RemoveItemController.ts
 │   │   ├── product/
 │   │   │   ├── CreateProductController.ts
 │   │   │   ├── DeleteProductController.ts
@@ -103,7 +104,8 @@ backend/
 │   │   ├── order/
 │   │   │   ├── AddItemOrderService.ts
 │   │   │   ├── CreateOrderService.ts
-│   │   │   └── ListOrderService.ts
+│   │   │   ├── ListOrderService.ts
+│   │   │   └── RemoveItemOrderService.ts
 │   │   ├── product/
 │   │   │   ├── CreateProductService.ts
 │   │   │   ├── DeleteProductService.ts
@@ -414,6 +416,12 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | `body.product_id` | string, mínimo 1 caractere |
 | `body.amount` | número inteiro positivo |
 
+#### `removeItemSchema` — DELETE `/order/remove`
+
+| Campo | Regras |
+|-------|--------|
+| `query.item_id` | string, mínimo 1 caractere |
+
 ---
 
 ## Middlewares
@@ -424,7 +432,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |------|---------|
 | **Arquivo** | `src/middlewares/validateSchema.ts` |
 | **Função** | Valida entrada da requisição com Zod antes de chegar ao controller |
-| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products`, GET `/category/product`, POST `/order`, POST `/order/add` |
+| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products`, GET `/category/product`, POST `/order`, POST `/order/add`, DELETE `/order/remove` |
 
 ### `isAuthenticated`
 
@@ -433,7 +441,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Arquivo** | `src/middlewares/isAuthenticated.ts` |
 | **Função** | Lê header `Authorization: Bearer <token>`, valida JWT com `JWT_SECRET`, extrai `sub` (user id) e define `req.id` |
 | **Erros** | 401 — "Token não informado" ou "Token inválido" |
-| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product`, POST `/order`, GET `/orders`, POST `/order/add` |
+| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product`, POST `/order`, GET `/orders`, POST `/order/add`, DELETE `/order/remove` |
 
 ### `isAdmin`
 
@@ -624,6 +632,19 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 
 ---
 
+#### `DELETE /order/remove` — Remover item do pedido
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` → `validateSchema(removeItemSchema)` |
+| **Query Params** | `item_id` (ID do item a ser deletado) |
+| **Service** | `RemoveItemOrderService` — verifica se o item existe no banco e o deleta |
+| **Resposta 200** | `{ message: "Item removido com sucesso!" }` |
+| **Erros** | 401 — sem token; 400 — "Item não encontrado" ou "Falha ao remover item do pedido" |
+
+---
+
 ## Autenticação e Autorização
 
 ### Fluxo de login
@@ -661,7 +682,7 @@ declare namespace Express {
 | Category | Sim | POST `/category`, GET `/category` |
 | Product | Sim | POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product` |
 | Order | Sim | POST `/order`, GET `/orders` |
-| Item | Sim | POST `/order/add` |
+| Item | Sim | POST `/order/add`, DELETE `/order/remove` |
 
 ---
 
