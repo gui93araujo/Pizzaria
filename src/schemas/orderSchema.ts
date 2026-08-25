@@ -40,3 +40,22 @@ export const detailOrderSchema = z.object({
       .min(1, { message: "O order_id é obrigatório" }),
   }),
 });
+
+export const sendOrderSchema = z.object({
+  body: z.object({
+    order_id: z.string({ message: "O order_id deve ser uma string" }),
+    name: z.string({ message: "O nome deve ser uma string" }),
+  }),
+});
+
+export const finishOrderSchema = z.object({
+  body: z.object({
+    order_id: z.string({ message: "O ID deve ser uma string" }),
+  }),
+});
+
+export const deleteOrderSchema = z.object({
+  query: z.object({
+    order_id: z.string({ message: "O ID deve ser uma string" }),
+  }),
+});

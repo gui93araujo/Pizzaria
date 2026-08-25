@@ -73,9 +73,12 @@ backend/
 │   │   ├── order/
 │   │   │   ├── AddItemController.ts
 │   │   │   ├── CreateOrderController.ts
+│   │   │   ├── DeleteOrderController.ts
 │   │   │   ├── DetailOrderController.ts
+│   │   │   ├── FinishOrderController.ts
 │   │   │   ├── ListOrderController.ts
-│   │   │   └── RemoveItemController.ts
+│   │   │   ├── RemoveItemController.ts
+│   │   │   └── SendOrderController.ts
 │   │   ├── product/
 │   │   │   ├── CreateProductController.ts
 │   │   │   ├── DeleteProductController.ts
@@ -105,9 +108,12 @@ backend/
 │   │   ├── order/
 │   │   │   ├── AddItemOrderService.ts
 │   │   │   ├── CreateOrderService.ts
+│   │   │   ├── DeleteOrderService.ts
 │   │   │   ├── DetailOrderService.ts
+│   │   │   ├── FinishOrderService.ts
 │   │   │   ├── ListOrderService.ts
-│   │   │   └── RemoveItemOrderService.ts
+│   │   │   ├── RemoveItemOrderService.ts
+│   │   │   └── SendOrderService.ts
 │   │   ├── product/
 │   │   │   ├── CreateProductService.ts
 │   │   │   ├── DeleteProductService.ts
@@ -430,6 +436,25 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |-------|--------|
 | `query.order_id` | string, mínimo 1 caractere |
 
+#### `sendOrderSchema` — PUT `/order/send`
+
+| Campo | Regras |
+|-------|--------|
+| `body.order_id` | string |
+| `body.name` | string |
+
+#### `finishOrderSchema` — PUT `/order/finish`
+
+| Campo | Regras |
+|-------|--------|
+| `body.order_id` | string |
+
+#### `deleteOrderSchema` — DELETE `/order`
+
+| Campo | Regras |
+|-------|--------|
+| `query.order_id` | string |
+
 ---
 
 ## Middlewares
@@ -440,7 +465,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 |------|---------|
 | **Arquivo** | `src/middlewares/validateSchema.ts` |
 | **Função** | Valida entrada da requisição com Zod antes de chegar ao controller |
-| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products`, GET `/category/product`, POST `/order`, POST `/order/add`, DELETE `/order/remove`, GET `/order/detail` |
+| **Usado em** | POST `/users`, POST `/session`, POST `/category`, POST `/product`, GET `/products`, GET `/category/product`, POST `/order`, POST `/order/add`, DELETE `/order/remove`, GET `/order/detail`, DELETE `/order`, PUT `/order/send`, PUT `/order/finish` |
 
 ### `isAuthenticated`
 
@@ -449,7 +474,7 @@ A validação é feita via middleware genérico `validateSchema`, que valida `bo
 | **Arquivo** | `src/middlewares/isAuthenticated.ts` |
 | **Função** | Lê header `Authorization: Bearer <token>`, valida JWT com `JWT_SECRET`, extrai `sub` (user id) e define `req.id` |
 | **Erros** | 401 — "Token não informado" ou "Token inválido" |
-| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product`, POST `/order`, GET `/orders`, POST `/order/add`, DELETE `/order/remove`, GET `/order/detail` |
+| **Usado em** | GET `/me`, POST `/category`, POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product`, POST `/order`, GET `/orders`, POST `/order/add`, DELETE `/order/remove`, GET `/order/detail`, DELETE `/order`, PUT `/order/send`, PUT `/order/finish` |
 
 ### `isAdmin`
 
@@ -666,6 +691,45 @@ Base URL: `http://localhost:3333` (ou valor de `PORT`)
 
 ---
 
+#### `DELETE /order` — Deletar pedido
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` → `validateSchema(deleteOrderSchema)` |
+| **Query Params** | `order_id` (ID do pedido a ser deletado) |
+| **Service** | `DeleteOrderService` — deleta o pedido do banco de dados |
+| **Resposta 200** | `{ message: "Pedido deletado com sucesso!" }` |
+| **Erros** | 401 — sem token; 400 — "Falha ao deletar o pedido" ou "Falha ao deletar pedido" |
+
+---
+
+#### `PUT /order/send` — Enviar pedido para cozinha
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` → `validateSchema(sendOrderSchema)` |
+| **Body** | `{ order_id, name }` |
+| **Service** | `SendOrderService` — atualiza o rascunho (`draft: false`) e define o nome da mesa |
+| **Resposta 200** | `{ id, table, name, draft, status, createdAt }` |
+| **Erros** | 401 — sem token; 400 — "Falha ao enviar pedido" |
+
+---
+
+#### `PUT /order/finish` — Finalizar pedido
+
+| Item | Detalhe |
+|------|---------|
+| **Auth** | Sim — Bearer token |
+| **Middlewares** | `isAuthenticated` → `validateSchema(finishOrderSchema)` |
+| **Body** | `{ order_id }` |
+| **Service** | `FinishOrderService` — marca o status do pedido como finalizado (`status: true`) |
+| **Resposta 200** | `{ id, table, name, draft, status, createdAt }` |
+| **Erros** | 401 — sem token; 400 — "Falha ao finalizar pedido" |
+
+---
+
 ## Autenticação e Autorização
 
 ### Fluxo de login
@@ -702,7 +766,7 @@ declare namespace Express {
 | User | Sim | POST `/users`, POST `/session`, GET `/me` |
 | Category | Sim | POST `/category`, GET `/category` |
 | Product | Sim | POST `/product`, GET `/products`, DELETE `/product`, GET `/category/product` |
-| Order | Sim | POST `/order`, GET `/orders`, GET `/order/detail` |
+| Order | Sim | POST `/order`, GET `/orders`, GET `/order/detail`, DELETE `/order`, PUT `/order/send`, PUT `/order/finish` |
 | Item | Sim | POST `/order/add`, DELETE `/order/remove` |
 
 ---

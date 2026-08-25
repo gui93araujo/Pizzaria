@@ -167,6 +167,25 @@ backend/
   - **Validação com Zod**: Verifica se os dados enviados na query params condizem com `detailOrderSchema` em `src/schemas/orderSchema.ts` (exige `order_id` como string).
   - **Retorno**: Detalhes do pedido contendo a lista de itens inclusos e dados do produto (`{ id, table, name, draft, status, createdAt, updatedAt, items: [{ id, amount, createdAt, product: { id, name, price, description, banner } }] }`).
 
+* **`DELETE /order`**
+  - Deleta um pedido específico.
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Validação com Zod**: Verifica se o ID enviado na query param condiz com `deleteOrderSchema` (exige `order_id` como string).
+  - **Retorno**: Mensagem de confirmação (`{ message: "Pedido deletado com sucesso!" }`).
+
+* **`PUT /order/send`**
+  - Envia o rascunho do pedido para a cozinha (define `draft: false` e atualiza o nome opcionalmente).
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Validação com Zod**: Verifica se os dados do corpo condizem com `sendOrderSchema` (exige `order_id` e `name` como string).
+  - **Retorno**: Detalhes do pedido enviado (`id`, `table`, `name`, `draft`, `status`, `createdAt`).
+
+* **`PUT /order/finish`**
+  - Finaliza o pedido (marca como concluído/pronto: `status: true`).
+  - **Requisito**: Requer o token JWT enviado no cabeçalho `Authorization` como `Bearer <token>`.
+  - **Validação com Zod**: Verifica se os dados do corpo condizem com `finishOrderSchema` (exige `order_id` como string).
+  - **Retorno**: Detalhes do pedido atualizado (`id`, `table`, `name`, `draft`, `status`, `createdAt`).
+
+
 
 
 
