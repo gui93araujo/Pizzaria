@@ -8,8 +8,8 @@ Este repositório unificado contém a aplicação completa para o sistema de ger
 
 O projeto é estruturado em subpastas independentes para facilitar a manutenção e organização:
 
-*   **[`backend/`](file:///C:/Users/gui93/OneDrive/Área de Trabalho/next/pizzaria/backend)**: API REST desenvolvida em Node.js com Express e TypeScript. É responsável pela lógica de negócios, persistência de dados (PostgreSQL via Prisma ORM), criptografia de senhas, upload de imagens (Cloudinary) e autenticação segura via tokens JWT.
-*   **[`frontend/`](file:///C:/Users/gui93/OneDrive/Área de Trabalho/next/pizzaria/frontend)**: Aplicação Web SPA criada em Next.js com React 19 e Tailwind CSS v4. Consome a API do backend para realizar autenticações, gerenciar produtos/categorias e controlar os fluxos de pedidos.
+*   **[`backend/`]**: API REST desenvolvida em Node.js com Express e TypeScript. É responsável pela lógica de negócios, persistência de dados (PostgreSQL via Prisma ORM), criptografia de senhas, upload de imagens (Cloudinary) e autenticação segura via tokens JWT.
+*   **[`frontend/`]**: Aplicação Web SPA criada em Next.js com React 19 e Tailwind CSS v4. Consome a API do backend para realizar autenticações, gerenciar produtos/categorias e controlar os fluxos de pedidos.
 
 ---
 
