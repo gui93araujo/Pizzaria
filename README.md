@@ -23,8 +23,6 @@ O projeto é estruturado em subpastas independentes para facilitar a manutençã
 *   **Cloudinary & Multer**: Envio e armazenamento automático das imagens dos produtos na nuvem.
 *   **Zod**: Validação estrita de todos os corpos, queries e parâmetros das requisições.
 
-Para saber mais sobre a documentação de rotas e esquemas Zod do backend, consulte o arquivo local de **[API Endpoints](file:///C:/Users/gui93/OneDrive/Área de Trabalho/next/pizzaria/backend/endpoints.md)**.
-
 ### 🎨 Frontend (Painel Web)
 *   **Next.js (App Router)**: Framework de React moderno para renderização de interfaces rápidas e rotas amigáveis.
 *   **React 19**: Biblioteca padrão para renderização baseada em componentes reativos.
