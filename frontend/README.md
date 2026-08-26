@@ -1,36 +1,77 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pizzaria Web - Frontend
 
-## Getting Started
+Este é o módulo de interface web do sistema de Pizzaria. Desenvolvido utilizando as tecnologias mais modernas de desenvolvimento web (Next.js 16, React 19, Tailwind CSS v4 e shadcn/ui), o painel fornece controle administrativo completo para funcionários e gerentes.
 
-First, run the development server:
+---
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## 🚀 Tecnologias Utilizadas
+
+O frontend do projeto utiliza as seguintes tecnologias e bibliotecas:
+
+*   **Next.js (App Router)**: Framework React para produção, fornecendo carregamento otimizado de rotas e performance de ponta.
+*   **React 19**: Biblioteca padrão para componentização e gerenciamento de estados.
+*   **Tailwind CSS v4**: Versão mais recente do utilitário CSS para design consistente, rápido e de alta performance.
+*   **shadcn/ui**: Componentes de interface desacoplados, acessíveis e altamente customizáveis para construção rápida da UI.
+*   **Lucide React**: Biblioteca de ícones moderna e leve para React.
+*   **Base UI**: Biblioteca de componentes funcionais "headless" focada em acessibilidade avançada.
+*   **TypeScript**: Tipagem estática segura no client-side para prevenção precoce de erros.
+
+---
+
+## 📂 Estrutura de Pastas
+
+```text
+frontend/
+├── public/              # Arquivos públicos estáticos (imagens, svgs, favicon)
+├── src/
+│   ├── app/             # Estrutura do App Router do Next.js
+│   │   ├── login/       # Rota e componentes de Login (/login)
+│   │   ├── register/    # Rota e componentes de Registro (/register)
+│   │   ├── layout.tsx   # Layout global (metadados e provedores)
+│   │   ├── globals.css  # Folha de estilo global e variáveis de cores OKLCH
+│   │   └── page.tsx     # Ponto de entrada (redireciona para o login)
+│   ├── components/      # Componentes reutilizáveis do projeto
+│   │   ├── forms/       # Formulários de negócio (ex: register-form.tsx)
+│   │   └── ui/          # Componentes visuais primários (card, button, input...)
+│   └── lib/             # Módulos utilitários compartilhados
+│       └── utils.ts     # Funções auxiliares de estilização (cn)
+├── components.json      # Configuração dos componentes da biblioteca shadcn
+├── endpoints.md         # Cópia local de documentação dos endpoints para consulta rápida
+├── tsconfig.json        # Configuração do compilador TypeScript
+├── tailwind.config.ts   # Configuração do tema e extensões do Tailwind
+└── package.json         # Dependências e scripts do projeto
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+---
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## 🛠️ Como Executar o Projeto
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+1.  **Instalar Dependências**:
+    Navegue até a pasta do frontend e execute:
+    ```bash
+    npm install
+    ```
 
-## Learn More
+2.  **Verificar Compilação**:
+    Execute o verificador do TypeScript para garantir consistência de tipos:
+    ```bash
+    npx tsc --noEmit
+    ```
 
-To learn more about Next.js, take a look at the following resources:
+3.  **Iniciar Servidor de Desenvolvimento**:
+    Inicie a aplicação local com hot-reload ativo:
+    ```bash
+    npm run dev
+    ```
+    *O painel web estará rodando e acessível em `http://localhost:3000`.*
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+---
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## 📝 Regras de Design e Cores do Sistema
 
-## Deploy on Vercel
+O projeto adota uma paleta de cores escura personalizada configurada com a especificação OKLCH em [`globals.css`](file:///C:/Users/gui93/OneDrive/Área de Trabalho/next/pizzaria/frontend/src/app/globals.css):
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+*   **Fundo Geral**: `var(--color-app-background)` (tom escuro balanceado).
+*   **Fundo de Cards**: `var(--color-app-card)` (tom escuro elevado para contraste de relevo).
+*   **Bordas e Inputs**: `var(--color-app-border)` (tom sutil para divisórias sem poluir a tela).
+*   **Acessibilidade**: Todos os campos de formulário estão semanticamente associados a Labels corretos (com `htmlFor` e `id` idênticos) garantindo suporte a leitores de tela e usabilidade.
