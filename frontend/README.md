@@ -69,7 +69,7 @@ frontend/
 
 ## 📝 Regras de Design e Cores do Sistema
 
-O projeto adota uma paleta de cores escura personalizada configurada com a especificação OKLCH em [`globals.css`](file:///C:/Users/gui93/OneDrive/Área de Trabalho/next/pizzaria/frontend/src/app/globals.css):
+O projeto adota uma paleta de cores escura personalizada configurada com a especificação OKLCH em [`globals.css`]:
 
 *   **Fundo Geral**: `var(--color-app-background)` (tom escuro balanceado).
 *   **Fundo de Cards**: `var(--color-app-card)` (tom escuro elevado para contraste de relevo).
