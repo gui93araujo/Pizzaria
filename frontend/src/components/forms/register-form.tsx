@@ -62,6 +62,11 @@ export function RegisterForm() {
               className="text-white bg-app-card border-app-border"
             />
           </div>
+          {state?.error && (
+            <p className="text-red-500 text-sm text-center font-semibold bg-red-500/10 p-2 rounded">
+              {state.error}
+            </p>
+          )}
           <Button
             type="submit"
             className="w-full bg-brand-primary text-white hover:bg-brand-primary"
