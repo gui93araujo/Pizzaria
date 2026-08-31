@@ -31,7 +31,6 @@ export async function apiClient<T>(
   if (!(fetchOptions.body instanceof FormData)) {
     headers["Content-Type"] = "application/json";
   }
-
   const cleanEndpoint = endpoint.startsWith("/") ? endpoint.slice(1) : endpoint;
 
   const response = await fetch(`${API_URL}/${cleanEndpoint}`, {
